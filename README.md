@@ -18,6 +18,10 @@ A simple stand-alone query builder. Made only to support MySQL for now and creat
     - [With Specified Columns](#with-specified-columns)
     - [With Alias](#with-alias)
     - [Joins](#joins)
+        - [Full Outer Join](#full-outer-join)
+        - [Inner Join](#inner-join)
+        - [Left Join](#left-join)
+        - [Right Join](#right-join)
 - [Insert Query](#insert-query)
     - [Insert Ignore](#insert-ignore)
     - [Replace Into](#replace-into)
@@ -113,6 +117,7 @@ $qb->insert($otherDb);
 ## Debugging and Execution
 
 Call the debug() method to print parameters (if any) and the full query.
+___
 Call exec() to execute the query and return the rowcount or resultset.
 
 Code:
@@ -165,7 +170,7 @@ FROM
 
 ### With Specified Columns
 
-There are two ways you can declare columns. As an array or simple parameters.
+There are two ways you can declare columns. As simple parameters or an array.
 
 Code:
 
@@ -201,6 +206,8 @@ FROM
 
 ### With Alias
 
+Code:
+
 ```PHP
 $result = $qb
 ->select()
@@ -208,6 +215,136 @@ $result = $qb
 ->table('persons a');
 
 $result->debug();
+```
+
+Output:
+
+```SQL
+SELECT a.`fname`,a.`lname`,a.`gender`
+FROM
+`testdb`.`persons a`
+```
+
+### Joins
+
+#### Full Outer Join
+
+Code:
+
+```PHP
+$result = $qb
+->select()
+->columns("a.fname", "a.lname", "a.gender")
+->table('persons a')
+->fullJoin('other_table b', 'a.id', '=', DB::raw('b.id'));
+
+$result->debug();
+```
+
+Output
+
+```Output
+SELECT a.`fname`,a.`lname`,a.`gender`
+FROM
+`testdb`.`persons a`
+FULL OUTER JOIN `testdb`.`other_table b`
+ON a.`id` = b.id
+```
+
+#### Inner Join
+
+Code:
+
+```PHP
+$result = $qb
+->select()
+->columns("a.fname", "a.lname", "a.gender")
+->table('persons a')
+->innerJoin('other_table b', 'a.id', '=', DB::raw('b.id'));
+
+$result->debug();
+```
+
+Output:
+
+```SQL
+SELECT a.`fname`,a.`lname`,a.`gender`
+FROM
+`testdb`.`persons a`
+INNER JOIN `testdb`.`other_table b`
+ON a.`id` = b.id
+```
+
+#### Left Join
+
+Code:
+
+```PHP
+$result = $qb
+->select()
+->columns("a.fname", "a.lname", "a.gender")
+->table('persons a')
+->leftJoin('other_table b', 'a.id', '=', DB::raw('b.id'));
+
+$result->debug();
+```
+
+Output:
+
+```SQL
+SELECT a.`fname`,a.`lname`,a.`gender`
+FROM
+`testdb`.`persons a`
+LEFT JOIN `testdb`.`other_table b`
+ON a.`id` = b.id
+```
+
+You can also turn it into an outer join by setting the fifth parameter to true (default: false). The same goes for right join.
+
+Code:
+
+```PHP
+$result = $qb
+->select()
+->columns("a.fname", "a.lname", "a.gender")
+->table('persons a')
+->leftJoin('other_table b', 'a.id', '=', DB::raw('b.id'), true);
+
+$result->debug();
+```
+
+Output:
+
+```SQL
+SELECT a.`fname`,a.`lname`,a.`gender`
+FROM
+`testdb`.`persons a`
+LEFT OUTER JOIN `testdb`.`other_table b`
+ON a.`id` = b.id
+```
+
+#### Right Join
+
+Code:
+
+```PHP
+$result = $qb
+->select()
+->columns("a.fname", "a.lname", "a.gender")
+->table('persons a')
+->rightJoin('other_table b', 'a.id', '=', DB::raw('b.id'));
+
+$result->debug();
+```
+
+Output:
+
+```SQL
+SELECT a.`fname`,a.`lname`,a.`gender`
+FROM
+`testdb`.`persons a`
+RIGHT JOIN `testdb`.`other_table b`
+ON a.`id` = b.id
 ```
 
 ## Insert Query
