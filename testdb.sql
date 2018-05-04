@@ -34,7 +34,7 @@ CREATE TABLE `persons` (
 
 insert  into `persons`(`id`,`fname`,`lname`,`gender`,`age`) values 
 
-(1,'Prince Ryan','Sy','M',26),
+(1,'Prince Ryan','Sy','M',26);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
