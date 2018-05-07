@@ -78,6 +78,7 @@ class DB
         try {
             //Data Source Name
             $this->settings = $this->config->get($this->server);
+            $driver = $this->settings["driver"];
             $dbName = $this->settings["dbname"];
             $hostName = $this->settings["hostname"];
             $userName = $this->settings["username"];
@@ -86,7 +87,7 @@ class DB
 
             $this->schema = $dbName;
 
-            $dsn = 'mysql:dbname=' . $dbName . ';host=' . $hostName . '';
+            $dsn = $driver . ':dbname=' . $dbName . ';host=' . $hostName . '';
 
             //PDO Instantiation
             $this->pdo = new \PDO($dsn, $userName, $password, $options);
