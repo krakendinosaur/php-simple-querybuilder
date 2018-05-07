@@ -6,4 +6,3 @@ define('LOGPATH', APPPATH . 'logs' . DIRECTORY_SEPARATOR);
 
 define('DB_DEFAULT', 'local');
 define('DB_LOCAL', 'local');
-define('DB_WORKABROAD', 'workabroad');
