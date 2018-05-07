@@ -65,18 +65,6 @@ class WriteSelect extends AbstractWriter implements WriterInterface
         return trim($allJoin);
     }
 
-    private function writeGroupBy()
-    {
-        $groupBy = $this->syntax->getGroupBy();
-        $allGroupBy = "";
-
-        if (is_array($groupBy) && !empty($groupBy)) {
-            $allGroupBy .= "GROUP BY " . $this->wrapArray($groupBy);
-        }
-
-        return trim($allGroupBy);
-    }
-
     private function writeHaving()
     {
         $having = $this->syntax->getHaving();

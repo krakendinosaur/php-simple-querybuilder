@@ -43,6 +43,18 @@ abstract class AbstractWriter
         return $allWhere;
     } // writeWhere()
 
+    protected function writeGroupBy()
+    {
+        $groupBy = $this->syntax->getGroupBy();
+        $allGroupBy = "";
+
+        if (is_array($groupBy) && !empty($groupBy)) {
+            $allGroupBy .= "GROUP BY " . $this->wrapArray($groupBy);
+        }
+
+        return trim($allGroupBy);
+    }
+
     protected function writeExpressions($expressions) // TO DO: optimize this method.
     {
         $allExpression = "";

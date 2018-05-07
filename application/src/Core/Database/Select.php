@@ -13,7 +13,6 @@ class Select extends AbstractBaseQuery
 {
     private $columns = array();
     private $join = array();
-    private $groupBy = array();
     private $orderBy = array();
     private $having = array();
 
@@ -91,22 +90,6 @@ class Select extends AbstractBaseQuery
     public function getJoin()
     {
         return $this->join;
-    }
-
-    public function groupBy($groupBy)
-    {
-        if (!is_array($groupBy)) {
-            $groupBy = func_get_args();
-        }
-        
-        $this->groupBy = array_merge($this->groupBy, $groupBy);
-        
-        return $this;
-    }
-
-    public function getGroupBy()
-    {
-        return $this->groupBy;
     }
 
     public function having($column, $operator = null, $value = null)

@@ -12,6 +12,7 @@ class WriteUpdate extends AbstractWriter implements WriterInterface
             $values = $this->syntax->getValues();
             $table = $this->writeTable();
             $where = $this->writeWhere();
+            $groupBy = $this->writeGroupBy();
             $limit = $this->writeLimit();
 
             $fields = array();
@@ -32,6 +33,7 @@ class WriteUpdate extends AbstractWriter implements WriterInterface
                     'SET',
                     $fieldsvals,
                     $where,
+                    $groupBy,
                     $limit
                 );
                 

@@ -23,6 +23,7 @@ abstract class AbstractBaseQuery
     protected $parameterWriter;
     protected $values = array();
     protected $where = array();
+    protected $groupBy = array();
     protected $limit;
     protected $nested = false;
     protected $nestedExpression = array();
@@ -249,6 +250,22 @@ abstract class AbstractBaseQuery
         } else {
             $this->where[] = compact('column', 'operator', 'value', 'link');
         }
+    }
+
+    public function groupBy($groupBy)
+    {
+        if (!is_array($groupBy)) {
+            $groupBy = func_get_args();
+        }
+        
+        $this->groupBy = array_merge($this->groupBy, $groupBy);
+        
+        return $this;
+    }
+
+    public function getGroupBy()
+    {
+        return $this->groupBy;
     }
 
     public function limit($offset, $rowCount = null)
