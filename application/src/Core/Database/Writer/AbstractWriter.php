@@ -184,11 +184,15 @@ abstract class AbstractWriter
     protected function addTableSchema($table)
     {
         $schemaTable = $this->wrapper . $this->schema . $this->wrapper . ".";
-        if (strpos($table, "AS")) {
-            $arrTable = explode(" ", $table);
-            $schemaTable .= $arrTable[0] . " " . $arrTable[1] . " " . $arrTable[2];
+        if ((strpos($table, "(") !== false)) {
+            $schemaTable = $table;
         } else {
-            $schemaTable .= $table;
+            if (strpos($table, "AS")) {
+                $arrTable = explode(" ", $table);
+                $schemaTable .= $arrTable[0] . " " . $arrTable[1] . " " . $arrTable[2];
+            } else {
+                $schemaTable .= $table;
+            }
         }
 
         return $schemaTable;
