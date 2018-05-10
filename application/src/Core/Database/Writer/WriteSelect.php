@@ -39,7 +39,7 @@ class WriteSelect extends AbstractWriter implements WriterInterface
         $allColumns = "";
 
         if (is_array($columns) && !empty($columns)) {
-            $allColumns = $this->wrapArray($columns);
+            $allColumns = implode(",", $this->wrapArray($columns));
         } else {
             $allColumns = "*";
         }

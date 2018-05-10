@@ -57,7 +57,7 @@ abstract class AbstractWriter
         $allGroupBy = "";
 
         if (is_array($groupBy) && !empty($groupBy)) {
-            $allGroupBy .= "GROUP BY " . $this->wrapArray($groupBy);
+            $allGroupBy .= "GROUP BY " . implode(",", $this->wrapArray($groupBy));
         }
 
         return trim($allGroupBy);
@@ -164,19 +164,12 @@ abstract class AbstractWriter
     {
         if (is_array($tables)) {
             $tables = $this->wrapArray($tables);
-        } else {
-            $tables = $this->wrap($tables);
-        }
-
-        if (strpos($tables, ",")) { // multiple tables
-            $arrTables = explode(",", $tables);
-            $tmpTables = array();
-
-            foreach ($arrTables as $table) {
+            foreach ($tables as $table) {
                 $tmpTables[] = $this->addTableSchema($table);
             } // loop through tables
             return implode(",", $tmpTables);
-        } else { // one table
+        } else {
+            $tables = $this->wrap($tables);
             return $this->addTableSchema($tables);
         }
     }
@@ -184,7 +177,7 @@ abstract class AbstractWriter
     protected function addTableSchema($table)
     {
         $schemaTable = $this->wrapper . $this->schema . $this->wrapper . ".";
-        if ((strpos($table, "(") !== false)) {
+        if (strpos($table, "SELECT")) {
             $schemaTable = $table;
         } else {
             if (strpos($table, "AS")) {
@@ -194,19 +187,16 @@ abstract class AbstractWriter
                 $schemaTable .= $table;
             }
         }
-
+        
         return $schemaTable;
     }
 
     protected function wrapArray(array $values)
     {
-        $wrapResult = "";
-        $arrResult = array();
+        $wrapResult = array();
         foreach ($values as $value) {
-            $arrResult[] = $this->wrap($value);
+            $wrapResult[] = $this->wrap($value);
         }
-
-        $wrapResult = implode(",", $arrResult);
 
         return $wrapResult;
     } // wrapArray()
