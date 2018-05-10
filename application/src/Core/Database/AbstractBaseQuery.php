@@ -35,6 +35,7 @@ abstract class AbstractBaseQuery
         $this->wf = new WriterFactory;
         $this->parameterWriter = new WriteParameter;
         $this->schema = $this->db->getSchema();
+        $this->writer = $this->wf->getWriter($this, $this->parameterWriter);
     }
 
     public function getSchema()
@@ -286,6 +287,8 @@ abstract class AbstractBaseQuery
 
     public function exec()
     {
+        $this->writer->setParameterize();
+
         $this->writeQuery();
 
         $this->writeParameters();
@@ -297,6 +300,8 @@ abstract class AbstractBaseQuery
 
     public function debug()
     {
+        $this->writer->setParameterize();
+
         $this->writeQuery();
 
         $this->writeParameters();
@@ -308,18 +313,22 @@ abstract class AbstractBaseQuery
         }
         echo $this->query;
         echo "</pre>";
+
+        return $this;
     }
 
     public function getQuery()
     {
+        $this->writer->setParameterize(false);
+
+        $this->writeQuery();
+
         return $this->query;
     }
 
     protected function writeQuery()
     {
         $this->parameterWriter->reset();
-
-        $this->writer = $this->wf->getWriter($this, $this->parameterWriter);
 
         $this->query = $this->writer->write();
 

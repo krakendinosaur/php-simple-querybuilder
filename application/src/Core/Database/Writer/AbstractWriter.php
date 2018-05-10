@@ -15,6 +15,7 @@ abstract class AbstractWriter
     protected $logger;
     protected $schema;
     protected $statements;
+    protected $parameterize = true;
 
     public function __construct(AbstractBaseQuery $syntax, WriteParameter $parameterWriter)
     {
@@ -22,6 +23,13 @@ abstract class AbstractWriter
         $this->parameterWriter = $parameterWriter;
         $this->logger = new Logger(LOGPATH . 'querybuilder');
         $this->schema = $this->syntax->getSchema();
+    }
+
+    public function setParameterize($parameterize = true)
+    {
+        $this->parameterize = $parameterize;
+
+        return $this;
     }
 
     protected function writeTable()
@@ -140,8 +148,13 @@ abstract class AbstractWriter
                 $this->parameterWriter->merge($value->getParameters());
             }
         } else {
-            $paramValue = ":v" . $this->parameterWriter->getCount();
-            $this->parameterWriter->add($value);
+            if ($this->parameterize) {
+                $paramValue = ":v" . $this->parameterWriter->getCount();
+                $this->parameterWriter->add($value);
+            } else {
+                $value = (is_string($value)) ? "'" . $value . "'" : $value;
+                $paramValue = $value;
+            }
         }
 
         return $paramValue;
