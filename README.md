@@ -2,8 +2,7 @@
 A simple stand-alone query builder. Made only to support MySQL for now and created with PHP Version 5.6.35. Automatically parameterizes values and sanitizes columns, tables, schema, etc.
 
 ## TO DO:
-- subwhere
-- code super optimization
+- finish the readme
 
 <a name = "table-of-contents"></a>
 
@@ -15,6 +14,7 @@ A simple stand-alone query builder. Made only to support MySQL for now and creat
     - [Load DB and QueryFactory Classes](#load-db-and-queryfactory-classes)
     - [Multiple Connections](#multiple-connections)
 - [Debugging and Execution](#debugging-and-execution)
+- [Error Logging](#error-logging)
 - [Select Query](#select-query)
     - [Simple](#simple)
     - [With Specified Columns](#with-specified-columns)
@@ -404,6 +404,8 @@ $result = $qb
     'gender' => 'M',
     'age' => 26
 ]);
+
+$result->debug();
 ```
 
 Output:
@@ -466,6 +468,8 @@ SET
 ```
 
 ## Update Query [▲](#table-of-contents)
+
+Note: WHERE is strictly required in update query or else it will throw an exception.
 
 Code:
 
