@@ -29,7 +29,7 @@ A simple stand-alone query builder. Made only to support MySQL for now and creat
     - [Replace Into](#replace-into)
 - [Update Query](#update-query)
 
-## Features [▲](#table-of-contents)
+## Features[▲](#table-of-contents)
 
 - Select
 - Update
@@ -41,7 +41,7 @@ A simple stand-alone query builder. Made only to support MySQL for now and creat
 - Query Error logging
 - Config file parser (php or json)
 
-## Installation [▲](#table-of-contents)
+## Installation[▲](#table-of-contents)
 
 Does not yet have a composer installation so you'll have to clone the project:
 
@@ -53,7 +53,7 @@ HTTPS:
 
     git clone https://github.com/princesy/simple-querybuilder.git
 
-### Connection [▲](#table-of-contents)
+### Connection[▲](#table-of-contents)
 
 Fixed location: application/config/database.php
 
@@ -85,7 +85,7 @@ return array
 );
 ```
 
-### Load DB and QueryFactory Classes [▲](#table-of-contents)
+### Load DB and QueryFactory Classes[▲](#table-of-contents)
 
 Example:
 
@@ -99,7 +99,7 @@ $db = new DB('local');
 $qb = new QueryFactory($db);
 ```
 
-### Multiple Connections [▲](#table-of-contents)
+### Multiple Connections[▲](#table-of-contents)
 
 You can have multiple connection instance. As long as it exists in the database.php file in the config folder.
 
@@ -116,7 +116,7 @@ $qb->select($db);
 $qb->insert($otherDb);
 ```
 
-## Debugging and Execution [▲](#table-of-contents)
+## Debugging and Execution[▲](#table-of-contents)
 
 Call the debug() method to print parameters (if any) and the full query.
 ___
@@ -148,9 +148,9 @@ $qb
 ->exec()
 ```
 
-## Select Query [▲](#table-of-contents)
+## Select Query[▲](#table-of-contents)
 
-### Simple [▲](#table-of-contents)
+### Simple[▲](#table-of-contents)
 
 Code:
 
@@ -170,7 +170,7 @@ FROM
 `testdb`.`persons`
 ```
 
-### With Specified Columns [▲](#table-of-contents)
+### With Specified Columns[▲](#table-of-contents)
 
 There are two ways you can declare columns. As simple parameters or an array.
 
@@ -206,7 +206,7 @@ FROM
 `testdb`.`persons`
 ```
 
-### With Alias [▲](#table-of-contents)
+### With Alias[▲](#table-of-contents)
 
 Code:
 
@@ -227,9 +227,9 @@ FROM
 `testdb`.`persons a`
 ```
 
-### Joins [▲](#table-of-contents)
+### Joins[▲](#table-of-contents)
 
-#### Full Outer Join [▲](#table-of-contents)
+#### Full Outer Join[▲](#table-of-contents)
 
 Code:
 
@@ -253,7 +253,7 @@ FULL OUTER JOIN `testdb`.`other_table b`
 ON a.`id` = b.id
 ```
 
-#### Inner Join [▲](#table-of-contents)
+#### Inner Join[▲](#table-of-contents)
 
 Code:
 
@@ -277,7 +277,7 @@ INNER JOIN `testdb`.`other_table b`
 ON a.`id` = b.id
 ```
 
-#### Left Join [▲](#table-of-contents)
+#### Left Join[▲](#table-of-contents)
 
 Code:
 
@@ -325,7 +325,7 @@ LEFT OUTER JOIN `testdb`.`other_table b`
 ON a.`id` = b.id
 ```
 
-#### Right Join [▲](#table-of-contents)
+#### Right Join[▲](#table-of-contents)
 
 Code:
 
@@ -349,7 +349,7 @@ RIGHT JOIN `testdb`.`other_table b`
 ON a.`id` = b.id
 ```
 
-## Insert Query [▲](#table-of-contents)
+## Insert Query[▲](#table-of-contents)
 
 Code:
 
@@ -387,7 +387,7 @@ SET
 `age` = :v4
 ```
 
-### Insert Ignore [▲](#table-of-contents)
+### Insert Ignore[▲](#table-of-contents)
 
 Just add the ignore() method to the insert instance.
 
@@ -428,7 +428,7 @@ SET
 `age` = :v4
 ```
 
-### Replace Into [▲](#table-of-contents)
+### Replace Into[▲](#table-of-contents)
 
 Code:
 
@@ -467,7 +467,7 @@ SET
 `age` = :v4
 ```
 
-## Update Query [▲](#table-of-contents)
+## Update Query[▲](#table-of-contents)
 
 Note: WHERE is strictly required in update query or else it will throw an exception.
 
