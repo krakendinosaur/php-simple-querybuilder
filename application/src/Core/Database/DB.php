@@ -98,7 +98,8 @@ class DB
             }
         } catch (\PDOException $e) {
             //Write into log and display Exception
-            echo $this->log($e->getMessage());
+            $this->log($e->getMessage());
+            echo "Error Connecting to Database.";
             exit;
         }
     }
@@ -198,8 +199,9 @@ class DB
             //Execute SQL Query
             $this->sQuery->execute();
         } catch (\PDOException $e) {
-           //Write error into log
-            echo $this->log($e->getMessage());
+            //Write error into log
+            echo "A query error was encountered.";
+            $this->log($e->getMessage());
             exit;
         }
 
@@ -251,15 +253,11 @@ class DB
      */
     private function log($message)
     {
-        $displayMessage = "Error Connecting to Database.";
-
         if (!empty($this->rawQuery)) {
             # Add the Raw SQL to the Log
             $message .= "\r\nRaw SQL : " . $this->rawQuery;
         }
         # Write into log
         $this->logger->write($message);
-        
-        return $displayMessage;
     }
 }
