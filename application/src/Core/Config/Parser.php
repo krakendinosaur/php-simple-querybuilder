@@ -2,7 +2,7 @@
 /**
  * A simple config file parser.
  *
- * PHP Version 5.5.15
+ * PHP Version 5.6.35
  *
  * @author Prince Ryan Sy
  */
