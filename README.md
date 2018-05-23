@@ -15,6 +15,15 @@ A simple stand-alone query builder. Made only to support MySQL for now and creat
     - [Multiple Connections](#multiple-connections)
 - [Debugging and Execution](#debugging-and-execution)
 - [Error Logging](#error-logging)
+    - [SQL Logging](#sql-logging)
+    - [Query Builder Logging](#query-builder-logging)
+        - [Required Where Clause](#required-where-clause)
+        - [Required Group By on Having](#required-group-by-on-having)
+- [Insert Query](#insert-query)
+    - [Insert Ignore](#insert-ignore)
+    - [Replace Into](#replace-into)
+- [Update Query](#update-query)
+- [Delete Query](#delete-query)
 - [Select Query](#select-query)
     - [Simple](#simple)
     - [With Specified Columns](#with-specified-columns)
@@ -24,10 +33,6 @@ A simple stand-alone query builder. Made only to support MySQL for now and creat
         - [Inner Join](#inner-join)
         - [Left Join](#left-join)
         - [Right Join](#right-join)
-- [Insert Query](#insert-query)
-    - [Insert Ignore](#insert-ignore)
-    - [Replace Into](#replace-into)
-- [Update Query](#update-query)
 
 ## Features[▲](#table-of-contents)
 
@@ -119,8 +124,6 @@ $qb->insert($otherDb);
 ## Debugging and Execution[▲](#table-of-contents)
 
 Call the debug() method to print parameters (if any) and the full query.
-___
-Call exec() to execute the query and return the rowcount or resultset.
 
 Code:
 
@@ -139,6 +142,8 @@ FROM
 `testdb`.`persons`
 ```
 
+Call the exec() method to execute the query and return the rowcount or resultset.
+
 Code:
 
 ```PHP
@@ -146,6 +151,242 @@ $qb
 ->select()
 ->table('persons')
 ->exec()
+```
+
+## Error Logging[▲](#table-of-contents)
+
+- The logger creates a new file daily in the format Y-m-d (e.g. 2018-05-21.log).
+- Every log will always be headed by a timestamp and will be followed below by the full stack trace.
+- The default logging path is located in application/logs and will automatically create the necessary folders if it doesn't exists.
+Note: You can modify this by going to common/default.php file and edit the LOGPATH constant.
+
+### SQL Logging[▲](#table-of-contents)
+
+- The logs are located in application/logs/sql.
+- Every time a connection error is encountered a message "Error Connecting to Database" will be displayed and the full stack trace can be found in the log file.
+- Every time a query error is encountered a message "A query error was encountered" will be displayed and the full stack trace can be found in the log file along with the raw Query ran.
+<br/>
+Sample log entry:
+
+```
+Time : 13:58:43
+SQLSTATE[42S02]: Base table or view not found: 1146 Table 'testdb.person' doesn't exist
+Raw SQL : SELECT a.`fname`,a.`lname`,a.`gender` FROM `testdb`.`person` AS `a` WHERE `id` = :v1
+```
+
+### Query Builder Logging[▲](#table-of-contents)
+
+The logs are located in application/logs/querybuilder.
+
+#### Required Where Clause[▲](#table-of-contents)
+
+WHERE Clause is always required in update or delete queries or else it will return an exception.<br/>
+
+Sample log entry:
+
+```
+Time : 11:33:41
+Error: Where clause is required in DELETE syntax.
+```
+
+#### Required Group By on Having[▲](#table-of-contents)
+
+GROUP BY Clause is always required when your Select query includes a having clause or else it will return an exception.<br/>
+
+Sample log entry:
+
+```
+Time : 11:55:53
+Error: GROUP BY is required for HAVING clause
+```
+
+## Insert Query[▲](#table-of-contents)
+
+Code:
+
+```PHP
+$result = $qb
+->insert()
+->table('persons')
+->values([
+    'fname' => 'Prince Ryan',
+    'lname' => 'Sy',
+    'gender' => 'M',
+    'age' => 26
+]);
+
+$result->debug();
+```
+
+Output:
+
+```SQL
+Array
+(
+    [v1] => Prince Ryan
+    [v2] => Sy
+    [v3] => M
+    [v4] => 26
+)
+
+INSERT INTO
+`testdb`.`persons`
+SET
+`fname` = :v1,
+`lname` = :v2,
+`gender` = :v3,
+`age` = :v4
+```
+
+### Insert Ignore[▲](#table-of-contents)
+
+Just add the ignore() method to the insert instance.
+
+Code:
+
+```PHP
+$result = $qb
+->insert()
+->ignore()
+->table('persons')
+->values([
+    'fname' => 'Prince Ryan',
+    'lname' => 'Sy',
+    'gender' => 'M',
+    'age' => 26
+]);
+
+$result->debug();
+```
+
+Output:
+
+```SQL
+Array
+(
+    [v1] => Prince Ryan
+    [v2] => Sy
+    [v3] => M
+    [v4] => 26
+)
+
+INSERT IGNORE INTO
+`testdb`.`persons`
+SET
+`fname` = :v1,
+`lname` = :v2,
+`gender` = :v3,
+`age` = :v4
+```
+
+### Replace Into[▲](#table-of-contents)
+
+Code:
+
+```PHP
+$result = $qb
+->insert()
+->replace()
+->table('persons')
+->values([
+    'fname' => 'Prince Ryan',
+    'lname' => 'Sy',
+    'gender' => 'M',
+    'age' => 26
+]);
+
+$result->debug();
+```
+
+Output:
+
+```SQL
+Array
+(
+    [v1] => Prince Ryan
+    [v2] => Sy
+    [v3] => M
+    [v4] => 26
+)
+
+REPLACE INTO
+`testdb`.`persons`
+SET
+`fname` = :v1,
+`lname` = :v2,
+`gender` = :v3,
+`age` = :v4
+```
+
+## Update Query[▲](#table-of-contents)
+
+Note: WHERE is strictly required in update query or else it will throw an exception. See [Required Where Clause](#required-where-clause)
+
+Code:
+
+```PHP
+$result = $qb
+->update()
+->table('persons')
+->values([
+    'fname' => 'Prince Ryan',
+    'lname' => 'Sy',
+    'gender' => 'M',
+    'age' => 26
+])
+->where("id", 1);
+
+$result->debug();
+```
+
+Output:
+
+```SQL
+Array
+(
+    [v1] => 1
+    [v2] => Prince Ryan
+    [v3] => Sy
+    [v4] => M
+    [v5] => 26
+)
+
+UPDATE
+`testdb`.`persons`
+SET
+`fname` = :v2,
+`lname` = :v3,
+`gender` = :v4,
+`age` = :v5
+WHERE `id` = :v1
+```
+
+## Delete Query[▲](#table-of-contents)
+
+Note: WHERE is strictly required in delete query or else it will throw an exception. See [Required Where Clause](#required-where-clause)
+
+Code:
+
+```PHP
+$delete = $qb->delete();
+$result = $delete
+->table('persons')
+->where('id', 1);
+
+$result->debug();
+```
+
+Output:
+
+```SQL
+Array
+(
+    [v1] => 27
+)
+
+DELETE FROM
+`testdb`.`persons`
+WHERE `id` = :v1
 ```
 
 ## Select Query[▲](#table-of-contents)
@@ -349,167 +590,6 @@ RIGHT JOIN `testdb`.`other_table b`
 ON a.`id` = b.id
 ```
 
-## Insert Query[▲](#table-of-contents)
-
-Code:
-
-```PHP
-$result = $qb
-->insert()
-->table('persons')
-->values([
-    'fname' => 'Prince Ryan',
-    'lname' => 'Sy',
-    'gender' => 'M',
-    'age' => 26
-]);
-
-$result->debug();
-```
-
-Output:
-
-```SQL
-Array
-(
-    [v1] => Prince Ryan
-    [v2] => Sy
-    [v3] => M
-    [v4] => 26
-)
-
-INSERT INTO
-`testdb`.`persons`
-SET
-`fname` = :v1,
-`lname` = :v2,
-`gender` = :v3,
-`age` = :v4
-```
-
-### Insert Ignore[▲](#table-of-contents)
-
-Just add the ignore() method to the insert instance.
-
-Code:
-
-```PHP
-$result = $qb
-->insert()
-->ignore()
-->table('persons')
-->values([
-    'fname' => 'Prince Ryan',
-    'lname' => 'Sy',
-    'gender' => 'M',
-    'age' => 26
-]);
-
-$result->debug();
-```
-
-Output:
-
-```SQL
-Array
-(
-    [v1] => Prince Ryan
-    [v2] => Sy
-    [v3] => M
-    [v4] => 26
-)
-
-INSERT IGNORE INTO
-`testdb`.`persons`
-SET
-`fname` = :v1,
-`lname` = :v2,
-`gender` = :v3,
-`age` = :v4
-```
-
-### Replace Into[▲](#table-of-contents)
-
-Code:
-
-```PHP
-$result = $qb
-->insert()
-->replace()
-->table('persons')
-->values([
-    'fname' => 'Prince Ryan',
-    'lname' => 'Sy',
-    'gender' => 'M',
-    'age' => 26
-]);
-
-$result->debug();
-```
-
-Output:
-
-```SQL
-Array
-(
-    [v1] => Prince Ryan
-    [v2] => Sy
-    [v3] => M
-    [v4] => 26
-)
-
-REPLACE INTO
-`testdb`.`persons`
-SET
-`fname` = :v1,
-`lname` = :v2,
-`gender` = :v3,
-`age` = :v4
-```
-
-## Update Query[▲](#table-of-contents)
-
-Note: WHERE is strictly required in update query or else it will throw an exception.
-
-Code:
-
-```PHP
-$result = $qb
-->update()
-->table('persons')
-->values([
-    'fname' => 'Prince Ryan',
-    'lname' => 'Sy',
-    'gender' => 'M',
-    'age' => 26
-])
-->where("id", 1);
-
-$result->debug();
-```
-
-Output:
-
-```SQL
-Array
-(
-    [v1] => 1
-    [v2] => Prince Ryan
-    [v3] => Sy
-    [v4] => M
-    [v5] => 26
-)
-
-UPDATE
-`testdb`.`persons`
-SET
-`fname` = :v2,
-`lname` = :v3,
-`gender` = :v4,
-`age` = :v5
-WHERE `id` = :v1
-```
-
 Capabilities:
 
 Select:
@@ -549,11 +629,11 @@ Update:
 - tables - accepts array or arguments/parameters
 - values - accepts only array format
 - WHERE clause is strictly required
-- can access all wheres in select
+- can access all wheres
 
 Delete:
 
 - raw expressions
 - tables - accepts array or arguments/parameters
 - WHERE clause is strictly required
-- can access all wheres in select
+- can access all wheres
