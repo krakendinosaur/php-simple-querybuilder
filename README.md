@@ -156,15 +156,15 @@ $qb
 ## Error Logging[▲](#table-of-contents)
 
 - The logger creates a new file daily in the format Y-m-d (e.g. 2018-05-21.log).
-- Every log will always be headed by a timestamp and will be followed below by the full stack trace.
+- Every log will always be headed by a timestamp and will be followed below by the full exception message.
 - The default logging path is located in application/logs and will automatically create the necessary folders if it doesn't exists.
 Note: You can modify this by going to common/default.php file and edit the LOGPATH constant.
 
 ### SQL Logging[▲](#table-of-contents)
 
 - The logs are located in application/logs/sql.
-- Every time a connection error is encountered a message "Error Connecting to Database" will be displayed and the full stack trace can be found in the log file.
-- Every time a query error is encountered a message "A query error was encountered" will be displayed and the full stack trace can be found in the log file along with the raw Query ran.
+- Every time a connection error is encountered a message "Error Connecting to Database" will be displayed and the full exception message can be found in the log file.
+- Every time a query error is encountered a message "A query error was encountered" will be displayed and the full exception message can be found in the log file along with the raw Query ran.
 <br/>
 Sample log entry:
 
