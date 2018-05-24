@@ -64,42 +64,4 @@ class WriteSelect extends AbstractWriter implements WriterInterface
 
         return trim($allJoin);
     }
-
-    private function writeHaving()
-    {
-        $having = $this->syntax->getHaving();
-
-        $allHaving = "";
-        if (is_array($having) && !empty($having)) {
-            try {
-                if (empty($this->syntax->getGroupBy())) {
-                    throw new QueryBuilderException("Error: GROUP BY is required for HAVING clause");
-                } else {
-                    $allHaving .= "HAVING " . $this->writeExpressions($having);
-                }
-            } catch (QueryBuilderException $e) {
-                $this->logger->write($e->getMessage());
-            }
-        }
-
-        return trim($allHaving);
-    }
-
-    private function writeOrderBy()
-    {
-        $orderBy = $this->syntax->getOrderBy();
-        $allOrderBy = "";
-
-        if (is_array($orderBy) & !empty($orderBy)) {
-            $allOrderBy = "ORDER BY ";
-            $arrOrderBy = array();
-            foreach ($orderBy as $col => $sort) {
-                $arrOrderBy[] = $this->wrap($col) . " " . $sort;
-            }
-
-            $allOrderBy .= implode(",", $arrOrderBy);
-        }
-
-        return trim($allOrderBy);
-    }
 }

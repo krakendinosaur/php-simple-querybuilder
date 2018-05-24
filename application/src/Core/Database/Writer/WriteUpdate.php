@@ -13,6 +13,8 @@ class WriteUpdate extends AbstractWriter implements WriterInterface
             $table = $this->writeTable();
             $where = $this->writeWhere();
             $groupBy = $this->writeGroupBy();
+            $having = $this->writeHaving();
+            $orderBy = $this->writeOrderBy();
             $limit = $this->writeLimit();
 
             $fields = array();
@@ -34,6 +36,8 @@ class WriteUpdate extends AbstractWriter implements WriterInterface
                     $fieldsvals,
                     $where,
                     $groupBy,
+                    $having,
+                    $orderBy,
                     $limit
                 );
                 

@@ -12,6 +12,8 @@ class WriteDelete extends AbstractWriter implements WriterInterface
             $table = $this->writeTable();
             $where = $this->writeWhere();
             $groupBy = $this->writeGroupBy();
+            $having = $this->writeHaving();
+            $orderBy = $this->writeOrderBy();
             $limit = $this->writeLimit();
 
             if (empty($where)) {
@@ -22,6 +24,8 @@ class WriteDelete extends AbstractWriter implements WriterInterface
                     $table,
                     $where,
                     $groupBy,
+                    $having,
+                    $orderBy,
                     $limit
                 );
                 

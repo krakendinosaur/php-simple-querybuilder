@@ -24,6 +24,8 @@ abstract class AbstractBaseQuery
     protected $values = array();
     protected $where = array();
     protected $groupBy = array();
+    protected $orderBy = array();
+    protected $having = array();
     protected $limit;
     protected $nested = false;
     protected $nestedExpression = array();
@@ -267,6 +269,68 @@ abstract class AbstractBaseQuery
     public function getGroupBy()
     {
         return $this->groupBy;
+    }
+
+    public function having($column, $operator = null, $value = null)
+    {
+        if (func_num_args() === 2) {
+            $value = $operator;
+            $operator = '=';
+        }
+
+        $link = "AND";
+
+        $this->havingHandler($column, $operator, $value, $link);
+
+        return $this;
+    }
+
+    public function orHaving($column, $operator = null, $value = null)
+    {
+        if (func_num_args() === 2) {
+            $value = $operator;
+            $operator = '=';
+        }
+
+        $link = "OR";
+
+        $this->havingHandler($column, $operator, $value, $link);
+
+        return $this;
+    }
+
+    private function havingHandler($column, $operator, $value, $link)
+    {
+        if ($this->nested) {
+            $this->nestedExpression[] = compact('column', 'operator', 'value', 'link');
+        } else {
+            $this->having[] = compact('column', 'operator', 'value', 'link');
+        }
+    }
+
+    public function getHaving()
+    {
+        return $this->having;
+    }
+
+    public function orderBy()
+    {
+        if (func_num_args() === 1) {
+            if (is_array(func_get_arg(0))) {
+                $this->orderBy = array_merge($this->orderBy, func_get_arg(0));
+            } else {
+                $this->orderBy = array_merge($this->orderBy, [func_get_arg(0) => 'ASC']);
+            }
+        } elseif (func_num_args() === 2) {
+            $this->orderBy = array_merge($this->orderBy, [func_get_arg(0) => func_get_arg(1)]);
+        }
+        
+        return $this;
+    }
+
+    public function getOrderBy()
+    {
+        return $this->orderBy;
     }
 
     public function limit($offset, $rowCount = null)
