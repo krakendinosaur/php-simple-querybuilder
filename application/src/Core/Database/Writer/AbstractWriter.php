@@ -100,6 +100,13 @@ abstract class AbstractWriter
                 $column($this->syntax);
                 $allExpression .= " (\n" . $this->writeExpressions($this->syntax->getNestedExpression()) . "\n)";
                 $this->syntax->setNested(false);
+            } elseif ($column instanceof Raw) {
+                $allExpression .= $link;
+                $allExpression .= $column;
+
+                if ($column->getParameters()) {
+                    $this->parameterWriter->merge($column->getParameters());
+                }
             } elseif (isset($expression['table']) && !is_null($expression['table'])) { // handle where exists
                 $table = $this->wrapTableSchema($expression['table']);
                 $allExpression .= $link;
