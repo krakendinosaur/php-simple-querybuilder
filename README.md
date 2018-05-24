@@ -2,7 +2,8 @@
 A simple stand-alone query builder. Made only to support MySQL for now and created with PHP Version 5.6.35. Automatically parameterizes values and sanitizes columns, tables, schema, etc.
 
 ## TO DO:
-- finish the readme
+- Finish the readme
+- Document Blocks
 
 <a name = "table-of-contents"></a>
 
@@ -33,6 +34,22 @@ A simple stand-alone query builder. Made only to support MySQL for now and creat
         - [Inner Join](#inner-join)
         - [Left Join](#left-join)
         - [Right Join](#right-join)
+- [Where](#where)
+    - [Simple Where](#simple-where)
+    - [Where Between and Where Not Between](#where-between-and-where-not-between)
+    - [Where In and Where Not In](#where-in-and-where-not-in)
+    - [Where Null and Where Not Null](#where-null-and-where-not-null)
+    - [Where Exists and Where Not Exists](#where-exists-and-where-not-exists)
+    - [Nested Where](#nested-where)
+- [Group By](#group-by)
+- [Having](#having)
+    - [Nested Having](#nested-having)
+- [Order By](#order-by)
+- [Limit](#limit)
+- [Raw Expressions](#raw-expressions)
+- [Raw Queries](#raw-queries)
+- [The Get Query Method](#the-get-query-method)
+- [Freestyle Coding](#freestyle-coding)
 
 ## Features[▲](#table-of-contents)
 
@@ -413,11 +430,10 @@ FROM
 
 ### With Specified Columns[▲](#table-of-contents)
 
-There are two ways you can declare columns. As simple parameters or an array.
+Accepts array:
 
 Code:
 
-As Parameters:
 ```PHP
 $result = $qb
 ->select()
@@ -427,9 +443,10 @@ $result = $qb
 $result->debug();
 ```
 
-OR
+or simple parameters:
 
-As Array:
+Code:
+
 ```PHP
 $result = $qb
 ->select()
@@ -449,13 +466,15 @@ FROM
 
 ### With Alias[▲](#table-of-contents)
 
+Note: AS keyword is required in table alias.
+
 Code:
 
 ```PHP
 $result = $qb
 ->select()
 ->columns("a.fname", "a.lname", "a.gender")
-->table('persons a');
+->table('persons AS a');
 
 $result->debug();
 ```
@@ -465,7 +484,7 @@ Output:
 ```SQL
 SELECT a.`fname`,a.`lname`,a.`gender`
 FROM
-`testdb`.`persons a`
+`testdb`.`persons` AS `a`
 ```
 
 ### Joins[▲](#table-of-contents)
@@ -478,7 +497,7 @@ Code:
 $result = $qb
 ->select()
 ->columns("a.fname", "a.lname", "a.gender")
-->table('persons a')
+->table('persons AS a')
 ->fullJoin('other_table b', 'a.id', '=', DB::raw('b.id'));
 
 $result->debug();
@@ -489,7 +508,7 @@ Output
 ```Output
 SELECT a.`fname`,a.`lname`,a.`gender`
 FROM
-`testdb`.`persons a`
+`testdb`.`persons` AS `a`
 FULL OUTER JOIN `testdb`.`other_table b`
 ON a.`id` = b.id
 ```
@@ -502,7 +521,7 @@ Code:
 $result = $qb
 ->select()
 ->columns("a.fname", "a.lname", "a.gender")
-->table('persons a')
+->table('persons AS a')
 ->innerJoin('other_table b', 'a.id', '=', DB::raw('b.id'));
 
 $result->debug();
@@ -513,7 +532,7 @@ Output:
 ```SQL
 SELECT a.`fname`,a.`lname`,a.`gender`
 FROM
-`testdb`.`persons a`
+`testdb`.`persons` AS `a`
 INNER JOIN `testdb`.`other_table b`
 ON a.`id` = b.id
 ```
@@ -526,7 +545,7 @@ Code:
 $result = $qb
 ->select()
 ->columns("a.fname", "a.lname", "a.gender")
-->table('persons a')
+->table('persons AS a')
 ->leftJoin('other_table b', 'a.id', '=', DB::raw('b.id'));
 
 $result->debug();
@@ -537,7 +556,7 @@ Output:
 ```SQL
 SELECT a.`fname`,a.`lname`,a.`gender`
 FROM
-`testdb`.`persons a`
+`testdb`.`persons` AS `a`
 LEFT JOIN `testdb`.`other_table b`
 ON a.`id` = b.id
 ```
@@ -550,7 +569,7 @@ Code:
 $result = $qb
 ->select()
 ->columns("a.fname", "a.lname", "a.gender")
-->table('persons a')
+->table('persons AS a')
 ->leftJoin('other_table b', 'a.id', '=', DB::raw('b.id'), true);
 
 $result->debug();
@@ -561,7 +580,7 @@ Output:
 ```SQL
 SELECT a.`fname`,a.`lname`,a.`gender`
 FROM
-`testdb`.`persons a`
+`testdb`.`persons` AS `a`
 LEFT OUTER JOIN `testdb`.`other_table b`
 ON a.`id` = b.id
 ```
@@ -574,7 +593,7 @@ Code:
 $result = $qb
 ->select()
 ->columns("a.fname", "a.lname", "a.gender")
-->table('persons a')
+->table('persons AS a')
 ->rightJoin('other_table b', 'a.id', '=', DB::raw('b.id'));
 
 $result->debug();
@@ -585,55 +604,332 @@ Output:
 ```SQL
 SELECT a.`fname`,a.`lname`,a.`gender`
 FROM
-`testdb`.`persons a`
+`testdb`.`persons` AS `a`
 RIGHT JOIN `testdb`.`other_table b`
 ON a.`id` = b.id
 ```
 
-Capabilities:
+## Where[▲](#table-of-contents)
 
-Select:
+### Simple Where[▲](#table-of-contents)
 
-- raw expressions
-- 'AS' keyword required in all types of aliases
-- columns - accepts array or arguments/parameters
-- tables - accepts array or arguments/parameters
-- fullJoin - strictly 4 arguments/parameters
-- innerJoin - strictly 4 arguments/parameters
-- leftJoin - strictly 4 or 5 arguements/parameters
-- rightJoin - strictly 4 or 5 arguements/parameters
-- standard where - strictly 2 or 3 arguments/parameters
-- orwhere - strictly 2 or 3 arguments/parameters
-- wherebetween - strictly 3 arguments/parameters
-- orwherebetween - strictly 3 arguments/parameters
-- wherein - strictly 2 arguments/parameters
-- orwherein - strictly 2 arguments/parameters
-- wherenull - strictly 1 argument/parameter
-- whereisnotnull - strictly 1 argument/parameter
-- groupby - accepts array or arguments/parameters
-- having - strictly 2 or 3 arguments/parameters
-- orhaving - strictly 2 or 3 arguments/parameters
-- nested expressions - extends all where methods
-- orderby - accepts array or strictly 2 arguments/parameters
-- limit - strictly 1 or 2 arguments/parameters
+Accepts 2 parameters (columnName, value) and operator is automatically "=":
 
-Insert:
+Code:
 
-- raw expressions
-- tables - accepts array or arguments/parameters
-- values - accepts only array format
+```PHP
+->where('name', 'Prince')
+->orWhere('lname', 'Sy');
+```
 
-Update:
+or 3 parameters (columnName, operator, value):
 
-- raw expressions
-- tables - accepts array or arguments/parameters
-- values - accepts only array format
-- WHERE clause is strictly required
-- can access all wheres
+Code:
 
-Delete:
+```PHP
+->where('name', 'LIKE', '%search%')
+->orWhere('age', '>', 20);
+```
 
-- raw expressions
-- tables - accepts array or arguments/parameters
-- WHERE clause is strictly required
-- can access all wheres
+### Where Between and Where Not Between
+
+Accepts strictly 3 parameters (columnName, from, to):
+
+Code:
+
+```PHP
+->whereBetween('age', 20, 30)
+->orWhereBetween('age', 30, 40)
+->whereNotBetween('age', 20, 30)
+->orWhereNotBetween('age', 30, 40);
+```
+
+### Where In and Where Not In
+
+Accepts 2 parameters (columnName, arrayValues):
+
+Code:
+
+```PHP
+->whereIn('age', [20, 23, 25])
+->orWhereIn('age', [26, 27, 28])
+->whereNotIn('age', [20, 23, 25])
+->orWhereNotIn('age', [26, 27, 28]);
+```
+
+### Where Null and Where Not Null
+
+Accepts 1 parameter (columnName):
+
+Code:
+
+```PHP
+->whereNull('gender')
+->orWhereNull('gender')
+->whereNotNull('gender')
+->orWhereNotNull('gender')
+```
+
+### Where Exists and Where Not Exists
+
+Accepts 3 parameters (table, columnName, Closure):
+
+Code:
+
+```PHP
+->whereExists('other_table', 'field', function ($q) {
+    $q->where('id', DB::raw('mytable.id'));
+})
+->orWhereExists('other_table', 'field', function ($q) {
+    $q->where('id', DB::raw('mytable.id'));
+})
+->whereNotExists('other_table', 'field', function ($q) {
+    $q->where('id', DB::raw('mytable.id'));
+})
+->orWhereNotExists('other_table', 'field', function ($q) {
+    $q->where('id', DB::raw('mytable.id'));
+});
+```
+
+### Nested Where
+
+Note: You can have an infinite depth of nested expressions.
+
+Code:
+
+```PHP
+->where(function ($q) {
+    $q->where('fname', '=', 'Prince')
+    ->orWhere('lname', '=', 'Sy');
+})
+->orWhere(function ($q) {
+    $q->where('fname', '=', 'Prince')
+    ->orWhere('lname', '=', 'Sy');
+});
+```
+
+## Group By[▲](#table-of-contents)
+
+Accepts array:
+
+Code:
+
+```PHP
+->groupBy(['age', 'lname']);
+```
+
+or simple parameters:
+
+Code:
+
+```PHP
+->groupBy('age', 'lname');
+```
+
+## Having[▲](#table-of-contents)
+
+Code:
+
+```PHP
+->having('age', '>=', 20)
+->orHaving('age', '<=', 30);
+```
+
+### Nested Having[▲](#table-of-contents)
+
+Note: You can have an infinite depth of nested expressions.
+
+Code:
+
+```PHP
+->having(function ($q) {
+    $q->having('age', '>=', 20)
+    ->orHaving('age', '<=', 30);
+})
+->orHaving(function ($q) {
+    $q->having('age', '>=', 20)
+    ->orHaving('age', '<=', 30);
+});
+```
+
+## Order By[▲](#table-of-contents)
+
+Accepts array:
+
+```PHP
+->orderBy([]
+    'age' => 'ASC',
+    'lname' => 'DESC'
+]);
+```
+
+or 2 parameters:
+
+```PHP
+->orderBy('age', 'ASC')
+->orderBy('lname', 'DESC');
+```
+
+## Limit[▲](#table-of-contents)
+
+Accepts 1 parameter (limit)
+
+```PHP
+->limit(10);
+```
+
+or 2 parameters (offset, limit)
+
+```PHP
+->limit(5, 10);
+```
+
+## Raw Expressions[▲](#table-of-contents)
+
+Accepts 1 parameter (expression):
+
+Code:
+
+```PHP
+$qb
+->select()
+->columns('a.field1', 'a.field2', DB::raw('AVG(b.field3)'))
+->table('mytable AS a', DB::raw('(SELECT * FROM other_table) AS b'))
+->debug();
+```
+
+Output:
+
+```SQL
+SELECT a.`field1`,a.`field2`,AVG(b.field3)
+FROM
+`testdb`.`mytable` AS `a`,(SELECT * FROM other_table) AS b
+```
+
+or 2 parameters (expression, arrayBindings):
+
+Code:
+
+```PHP
+$qb
+->select()
+->columns('a.field1', 'a.field2', DB::raw('AVG(b.field3)'))
+->table('mytable AS a', DB::raw('(SELECT * FROM other_table) AS b'))
+->where(DB::raw('date(date_field) >= :dateField', ['dateField' => '2018-05-20']))
+->debug();
+```
+
+Output:
+
+```SQL
+Array
+(
+    [dateField] => 2018-05-20
+)
+
+SELECT a.`field1`,a.`field2`,AVG(b.field3)
+FROM
+`testdb`.`mytable` AS `a`,(SELECT * FROM other_table) AS b
+WHERE date(date_field) >= :dateField
+```
+
+
+## Raw Queries[▲](#table-of-contents)
+
+Accepts 1 parameter (query):
+
+Code:
+
+```PHP
+$db->query("SELECT * FROM persons WHERE name = 'Prince'");
+//returns the resultset.
+```
+
+Accepts 2 parameters (query, bindings):
+
+```PHP
+$db->query("SELECT * FROM persons WHERE name = :name", ['name' => 'Prince']);
+//returns the resultset.
+```
+
+## The Get Query Method[▲](#table-of-contents)
+
+This method returns the full built query as raw output.
+
+Code:
+
+```PHP
+echo $qb
+->select()
+->columns('a.field1', 'a.field2', 'b.field3')
+->table('table1 AS a', 'table2 AS b')
+->where('a.field1', '=', DB::raw('b.field1'))
+->whereBetween('a.fieldBetween', 20, 40)
+->whereIn('a.fieldIn', ['10', '20', '30'])
+->getQuery();
+```
+
+Output:
+
+```SQL
+SELECT a.`field1`,a.`field2`,b.`field3` FROM `testdb`.`table1` AS `a`,`testdb`.`table2` AS `b` WHERE a.`field1` = b.field1 AND a.`fieldBetween` BETWEEN 20 AND 40 AND a.`fieldIn` IN ('10','20','30')
+```
+
+## Freestyle Coding
+
+You can repeat methods as you see fit. You can also wrap them through conditions, loops, etc.<br/>
+Note: Also applicable in all query types. (SELECT, INSERT, UPDATE, DELETE)
+
+Code:
+
+```PHP
+$select = $qb->select();
+
+$select
+->columns('a.field1', 'a.field2')
+->table('table1 AS a')
+->where('a.field1', 'value');
+
+if ($condition === true) {
+    $select
+    ->columns('b.field1', 'b.field2')
+    ->table('table2 AS b')
+    ->where('a.field1', DB::raw('b.field1'));
+}
+
+$select->debug();
+```
+
+
+if condition is true:
+
+Output:
+
+```SQL
+Array
+(
+    [v1] => value
+)
+
+SELECT a.`field1`,a.`field2`,b.`field1`,b.`field2`
+FROM
+`testdb`.`table1` AS `a`,`testdb`.`table2` AS `b`
+WHERE a.`field1` = :v1
+AND a.`field1` = b.field1
+```
+
+if condition is false:
+
+Output:
+
+```SQL
+Array
+(
+    [v1] => value
+)
+
+SELECT a.`field1`,a.`field2`
+FROM
+`testdb`.`table1` AS `a`
+WHERE a.`field1` = :v1
+```
