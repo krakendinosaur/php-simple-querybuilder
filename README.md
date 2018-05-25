@@ -203,7 +203,7 @@ Sample log entry:
 
 ```
 Time : 11:33:41
-Error: Where clause is required in DELETE syntax.
+Error: Missing WHERE clause in DELETE syntax.
 ```
 
 #### Required Group By on Having[▲](#table-of-contents)
@@ -214,7 +214,7 @@ Sample log entry:
 
 ```
 Time : 11:55:53
-Error: GROUP BY is required for HAVING clause
+Error: Missing GROUP BY for HAVING clause
 ```
 
 ## Insert Query[▲](#table-of-contents)
@@ -815,7 +815,7 @@ $qb
 ->select()
 ->columns('a.field1', 'a.field2', DB::raw('AVG(b.field3)'))
 ->table('mytable AS a', DB::raw('(SELECT * FROM other_table) AS b'))
-->where(DB::raw('date(date_field) >= :dateField', ['dateField' => '2018-05-20']))
+->where(DB::raw('DATE(date_field) >= :dateField', ['dateField' => '2018-05-20']))
 ->debug();
 ```
 
@@ -830,7 +830,7 @@ Array
 SELECT a.`field1`,a.`field2`,AVG(b.field3)
 FROM
 `testdb`.`mytable` AS `a`,(SELECT * FROM other_table) AS b
-WHERE date(date_field) >= :dateField
+WHERE DATE(date_field) >= :dateField
 ```
 
 
