@@ -71,7 +71,7 @@ abstract class AbstractWriter
         if (is_array($having) && !empty($having)) {
             try {
                 if (empty($this->syntax->getGroupBy())) {
-                    throw new QueryBuilderException("Error: GROUP BY is required for HAVING clause");
+                    throw new QueryBuilderException("Error: Missing GROUP BY for HAVING clause");
                 } else {
                     $allHaving .= "HAVING " . $this->writeExpressions($having);
                 }

@@ -2,32 +2,41 @@
 
 namespace Core\Database\Writer;
 
-use Core\Database\Raw;
+use Core\Exception\QueryBuilderException;
 
 class WriteInsert extends AbstractWriter implements WriterInterface
 {
     public function write()
     {
-        $values = $this->syntax->getValues();
-        $syntax = $this->writeSyntax();
-        $table = $this->writeTable();
+        try {
+            $values = $this->syntax->getValues();
+            $syntax = $this->writeSyntax();
+            $table = $this->writeTable();
 
-        $fields = array();
+            $fields = array();
 
-        foreach ($values as $key => $value) {
-            $fields[] = $this->wrapper . $key . $this->wrapper . " = " . $this->parameterize($value);
+            if (empty($values)) {
+                throw new QueryBuilderException("Error: Missing values on " . $syntax . " syntax.");
+                return null;
+            } else {
+                foreach ($values as $key => $value) {
+                    $fields[] = $this->wrapper . $key . $this->wrapper . " = " . $this->parameterize($value);
+                }
+
+                $fieldsvals = implode(",\n", $fields);
+
+                $this->statements = array(
+                    $syntax . " INTO",
+                    $table,
+                    'SET',
+                    $fieldsvals
+                );
+
+                return $this->parseStatements();
+            }
+        } catch (QueryBuilderException $e) {
+            $this->logger->write($e->getMessage());
         }
-
-        $fieldsvals = implode(",\n", $fields);
-
-        $this->statements = array(
-            $syntax . " INTO",
-            $table,
-            'SET',
-            $fieldsvals
-        );
-
-        return $this->parseStatements();
     } // write()
 
     private function writeSyntax()

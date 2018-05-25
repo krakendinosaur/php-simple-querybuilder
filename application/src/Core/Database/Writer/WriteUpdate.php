@@ -19,29 +19,34 @@ class WriteUpdate extends AbstractWriter implements WriterInterface
 
             $fields = array();
 
-            foreach ($values as $key => $value) {
-                $fields[] = $this->wrapper . $key . $this->wrapper . " = " . $this->parameterize($value);
-            }
-
-            $fieldsvals = implode(",\n", $fields);
-
-            if (empty($where)) {
-                throw new QueryBuilderException("Error: Where clause is required in UPDATE syntax.");
+            if (empty($values)) {
+                throw new QueryBuilderException("Error: Missing values on UPDATE syntax.");
                 return null;
             } else {
-                $this->statements = array(
-                    'UPDATE',
-                    $table,
-                    'SET',
-                    $fieldsvals,
-                    $where,
-                    $groupBy,
-                    $having,
-                    $orderBy,
-                    $limit
-                );
-                
-                return $this->parseStatements();
+                foreach ($values as $key => $value) {
+                    $fields[] = $this->wrapper . $key . $this->wrapper . " = " . $this->parameterize($value);
+                }
+
+                $fieldsvals = implode(",\n", $fields);
+
+                if (empty($where)) {
+                    throw new QueryBuilderException("Error: Missing WHERE clause in UPDATE syntax.");
+                    return null;
+                } else {
+                    $this->statements = array(
+                        'UPDATE',
+                        $table,
+                        'SET',
+                        $fieldsvals,
+                        $where,
+                        $groupBy,
+                        $having,
+                        $orderBy,
+                        $limit
+                    );
+                    
+                    return $this->parseStatements();
+                }
             }
         } catch (QueryBuilderException $e) {
             $this->logger->write($e->getMessage());

@@ -17,7 +17,7 @@ class WriteDelete extends AbstractWriter implements WriterInterface
             $limit = $this->writeLimit();
 
             if (empty($where)) {
-                throw new QueryBuilderException("Error: Where clause is required in DELETE syntax.");
+                throw new QueryBuilderException("Error: Missing WHERE clause in DELETE syntax.");
             } else {
                 $this->statements = array(
                     'DELETE FROM',
