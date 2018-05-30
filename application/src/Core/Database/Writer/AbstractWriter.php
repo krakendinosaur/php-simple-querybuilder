@@ -100,13 +100,6 @@ abstract class AbstractWriter
                 $column($this->syntax);
                 $allExpression .= " (\n" . $this->writeExpressions($this->syntax->getNestedExpression()) . "\n)";
                 $this->syntax->setNested(false);
-            } elseif ($column instanceof Raw) {
-                $allExpression .= $link;
-                $allExpression .= $column;
-
-                if ($column->getParameters()) {
-                    $this->parameterWriter->merge($column->getParameters());
-                }
             } elseif (isset($expression['table']) && !is_null($expression['table'])) { // handle where exists
                 $table = $this->wrapTableSchema($expression['table']);
                 $allExpression .= $link;
@@ -138,8 +131,11 @@ abstract class AbstractWriter
             } else { // standard where clause
                 $allExpression .= $link;
                 $allExpression .= " " . $this->wrap($column);
-                $allExpression .= " " . $operator;
-                $allExpression .= " " . $this->parameterize($value);
+
+                if (!is_null($value)) {
+                    $allExpression .= " " . $operator;
+                    $allExpression .= " " . $this->parameterize($value);
+                }
             }
             
             $allExpression .= "\n";
@@ -208,6 +204,7 @@ abstract class AbstractWriter
     protected function wrapTableSchema($tables)
     {
         if (is_array($tables)) {
+            $tmpTables = array();
             $tables = $this->wrapArray($tables);
             foreach ($tables as $table) {
                 $tmpTables[] = $this->addTableSchema($table);
@@ -222,7 +219,7 @@ abstract class AbstractWriter
     protected function addTableSchema($table)
     {
         $schemaTable = $this->wrapper . $this->schema . $this->wrapper . ".";
-        if (strpos($table, "SELECT")) {
+        if (strpos($table, "SELECT") || strpos($table, ".")) {
             $schemaTable = $table;
         } else {
             if (strpos($table, "AS")) {
