@@ -15,7 +15,6 @@ class Logger
     # @string, Log directory name
     private $path;
     
-    # @void, Default Constructor, Sets the timezone and path of the log files.
     public function __construct($path)
     {
         date_default_timezone_set('Asia/Manila');
@@ -60,7 +59,7 @@ class Logger
                 $this->edit($log, $date, $message);
             }
         } else {
-            if (mkdir($this->path, 0644, true) === true) {
+            if (mkdir($this->path, 0664, true) === true) {
                 $this->write($message);
             }
         }
