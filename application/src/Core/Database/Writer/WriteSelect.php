@@ -18,8 +18,16 @@ class WriteSelect extends AbstractWriter implements WriterInterface
         $orderBy = $this->writeOrderBy();
         $limit = $this->writeLimit();
 
+        $count = $this->syntax->getCount();
+
+        $selectLine = 'SELECT ' . $columns;
+
+        if ($count) {
+            $selectLine = 'SELECT COUNT(*) AS `count`';
+        }
+
         $this->statements = array(
-            'SELECT ' . $columns,
+            $selectLine,
             'FROM',
             $table,
             $join,

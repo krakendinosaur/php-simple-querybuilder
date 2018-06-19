@@ -29,6 +29,7 @@ class Select extends AbstractBaseQuery
     public function count()
     {
         $this->count = true;
+        return $this->exec()[0]['count'];
     }
 
     public function getCount()
