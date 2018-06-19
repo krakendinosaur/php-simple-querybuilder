@@ -13,6 +13,7 @@ class Select extends AbstractBaseQuery
 {
     private $columns = array();
     private $join = array();
+    private $count = false;
 
     public function columns($columns)
     {
@@ -23,6 +24,16 @@ class Select extends AbstractBaseQuery
         $this->columns = array_merge($this->columns, $columns);
 
         return $this;
+    }
+
+    public function count()
+    {
+        $this->count = true;
+    }
+
+    public function getCount()
+    {
+        return $this->count;
     }
 
     public function getColumns()

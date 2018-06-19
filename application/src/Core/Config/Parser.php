@@ -122,10 +122,10 @@ class Parser
                 $args = func_get_args();
                 return $this->getNested($args);
             } else {
-                if (array_key_exists(func_get_arg(0), $this->settings)) {
+                if (is_array($this->settings) && array_key_exists(func_get_arg(0), $this->settings)) {
                     return $this->settings[func_get_arg(0)];
                 } else {
-                    throw new IndexNotFoundException("Index does not exist.");
+                    throw new IndexNotFoundException("Index [" . func_get_arg(0) . "] does not exist.");
                 }
             }
         } catch (IndexNotFoundException $e) {
@@ -146,7 +146,7 @@ class Parser
             foreach ($args as $arg) {
                 if (!is_array($context) || !array_key_exists($arg, $context)) {
                     $context = null;
-                    throw new IndexNotFoundException("Index does not exist.");
+                    throw new IndexNotFoundException("Index [" . func_get_arg(0) . "] does not exist.");
                 } else {
                     $context = $context[$arg];
                 }
