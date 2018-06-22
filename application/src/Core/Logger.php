@@ -59,7 +59,7 @@ class Logger
                 $this->edit($log, $date, $message);
             }
         } else {
-            if (mkdir($this->path, 0664, true) === true) {
+            if (mkdir($this->path, 0700, true) === true) {
                 $this->write($message);
             }
         }
