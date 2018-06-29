@@ -100,7 +100,6 @@ class DB
             //Write into log and display Exception
             $this->log($e->getMessage());
             echo "Error Connecting to Database.";
-            exit;
         }
     }
 
@@ -202,7 +201,6 @@ class DB
             //Write error into log
             echo "A query error was encountered.";
             $this->log($e->getMessage());
-            exit;
         }
 
         //Reset parameters
