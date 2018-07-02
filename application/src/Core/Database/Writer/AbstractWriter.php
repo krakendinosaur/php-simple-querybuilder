@@ -152,8 +152,8 @@ abstract class AbstractWriter
         if (is_array($orderBy) & !empty($orderBy)) {
             $allOrderBy = "ORDER BY ";
             $arrOrderBy = array();
-            foreach ($orderBy as $col => $sort) {
-                $arrOrderBy[] = $this->wrap($col) . " " . $sort;
+            foreach ($orderBy as $val) {
+                $arrOrderBy[] = $this->wrap($val['col']) . " " . $val['sort'];
             }
 
             $allOrderBy .= implode(",", $arrOrderBy);

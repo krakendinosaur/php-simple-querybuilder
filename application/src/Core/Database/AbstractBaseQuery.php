@@ -313,9 +313,9 @@ abstract class AbstractBaseQuery
         return $this->having;
     }
 
-    public function orderBy()
+    public function orderBy($col, $sort = null)
     {
-        if (func_num_args() === 1) {
+        /*if (func_num_args() === 1) {
             if (is_array(func_get_arg(0))) {
                 $this->orderBy = array_merge($this->orderBy, func_get_arg(0));
             } else {
@@ -323,7 +323,13 @@ abstract class AbstractBaseQuery
             }
         } elseif (func_num_args() === 2) {
             $this->orderBy = array_merge($this->orderBy, [func_get_arg(0) => func_get_arg(1)]);
+        }*/
+
+        if (empty($sort)) {
+            $sort = 'ASC';
         }
+
+        $this->orderBy[] = compact('col', 'sort');
         
         return $this;
     }
