@@ -32,6 +32,11 @@ class Select extends AbstractBaseQuery
         return $this->exec()[0]['count'];
     }
 
+    public function one()
+    {
+        return $this->limit(1)->exec()[0];
+    }
+
     public function name()
     {
         return $this
