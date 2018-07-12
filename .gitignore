@@ -1,4 +1,4 @@
-config/
-logs/
-common/
-index.php
+/config/
+/logs/
+/common/
+/index.php
