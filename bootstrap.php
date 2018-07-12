@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Autoload method for one core directory of objects
  */
