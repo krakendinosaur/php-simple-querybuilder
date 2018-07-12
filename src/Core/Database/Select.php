@@ -29,20 +29,46 @@ class Select extends AbstractBaseQuery
     public function count()
     {
         $this->count = true;
-        return $this->exec()[0]['count'];
+        $rs = $this->exec();
+
+        $val = null;
+
+        if (is_array($rs) && !empty($rs)) {
+            $val = $rs[0]['count'];
+        }
+
+        return $val;
     }
 
     public function one()
     {
-        return $this->limit(1)->exec()[0];
+        $rs = $this
+        ->limit(1)
+        ->exec();
+
+        $val = null;
+
+        if (is_array($rs) && !empty($rs)) {
+            $val = $rs[0];
+        }
+
+        return $val;
     }
 
     public function name()
     {
-        return $this
+        $rs = $this
         ->columns("name")
         ->limit(1)
-        ->exec()[0]['name'];
+        ->exec();
+
+        $val = null;
+
+        if (is_array($rs) && !empty($rs)) {
+            $val = $rs[0]['name'];
+        }
+        
+        return $val;
     }
 
     public function getCount()

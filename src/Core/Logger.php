@@ -25,11 +25,6 @@ class Logger
     {
         $this->path = $value . DIRECTORY_SEPARATOR;
     }
-
-    public function getPath()
-    {
-        return $this->path;
-    }
     
    /**
     *   @void

@@ -1,4 +1,4 @@
-application/config/
-application/logs/
+config/
+logs/
 common/
 index.php
