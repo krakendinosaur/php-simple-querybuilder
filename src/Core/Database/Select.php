@@ -11,6 +11,7 @@ namespace Core\Database;
 
 class Select extends AbstractBaseQuery
 {
+    private $countColumn;
     private $columns = array();
     private $join = array();
     private $count = false;
@@ -26,8 +27,12 @@ class Select extends AbstractBaseQuery
         return $this;
     }
 
-    public function count()
+    public function count($countColumn = null)
     {
+        if (!empty($countColumn)) {
+            $this->countColumn = $countColumn;
+        }
+
         $this->count = true;
         $rs = $this->exec();
 
@@ -37,7 +42,14 @@ class Select extends AbstractBaseQuery
             $val = $rs[0]['count'];
         }
 
+        $this->count = false;
+
         return $val;
+    }
+
+    public function getCountColumn()
+    {
+        return $this->countColumn;
     }
 
     public function one()

@@ -251,11 +251,23 @@ class DB
      */
     private function log($message)
     {
+        $logMessage = '';
+        
+        if (!empty($_SERVER['SERVER_SOFTWARE'])) {
+            $logMessage .= "Server: " . $_SERVER['SERVER_SOFTWARE']; 
+        }
+        
+        if (!empty($_SERVER['REQUEST_URI'])) {
+            $logMessage .= "\r\nPage: " . $_SERVER['REQUEST_URI'] . "\r\n";
+        }
+
+        $logMessage .= $message;
+
         if (!empty($this->rawQuery)) {
             # Add the Raw SQL to the Log
-            $message .= "\r\nRaw SQL : " . $this->rawQuery;
+            $logMessage .= "\r\nRaw SQL: " . $this->rawQuery;
         }
         # Write into log
-        $this->logger->write($message);
+        $this->logger->write($logMessage);
     }
 }

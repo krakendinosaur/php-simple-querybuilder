@@ -10,6 +10,7 @@ class WriteSelect extends AbstractWriter implements WriterInterface
     public function write()
     {
         $columns = $this->writeColumns();
+        $countColumn = $this->writeCountColumn();
         $table = $this->writeTable();
         $join = $this->writeJoin();
         $where = $this->writeWhere();
@@ -22,8 +23,12 @@ class WriteSelect extends AbstractWriter implements WriterInterface
 
         $selectLine = 'SELECT ' . $columns;
 
-        if ($count) {
+        if ($count === true) {
             $selectLine = 'SELECT COUNT(*) AS `count`';
+
+            if (!empty($countColumn)) {
+                $selectLine = 'SELECT COUNT(' . $countColumn . ') AS `count`';
+            }
         }
 
         $this->statements = array(
@@ -53,6 +58,14 @@ class WriteSelect extends AbstractWriter implements WriterInterface
         }
 
         return trim($allColumns);
+    }
+
+    private function writeCountColumn()
+    {
+        $column = $this->syntax->getCountColumn();
+        return (!empty($column))
+            ? $this->wrap($column)
+            : null;
     }
 
     private function writeJoin()

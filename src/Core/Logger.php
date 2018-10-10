@@ -15,10 +15,13 @@ class Logger
     # @string, Log directory name
     private $path;
     
-    public function __construct($path)
+    public function __construct($path = null)
     {
         date_default_timezone_set('Asia/Manila');
-        $this->setPath($path);
+        
+        if (!empty($path)) {
+            $this->setPath($path);
+        }
     }
 
     public function setPath($value)

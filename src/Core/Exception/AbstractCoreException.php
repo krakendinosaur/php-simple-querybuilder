@@ -6,12 +6,12 @@ abstract class AbstractCoreException extends \Exception
 {
     public function getFullMessage()
     {
-        $msg = get_class($this) . ": " . $this->getMessage();
+        $msg = substr(strrchr(get_class($this), "\\"), 1) . ": " . $this->getMessage();
         if ($this->getLine()) {
             $msg .= " at line " . $this->getLine() . " ";
         }
-        if ($this->getFile()) {
-            $msg .= "on file " .  $this->getFile();
+        if ($_SERVER['SCRIPT_NAME']) {
+            $msg .= "on file " .  $_SERVER['SCRIPT_NAME'];
         }
         return $msg;
     }
